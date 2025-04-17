@@ -12,7 +12,7 @@ STEP_PENALTY = -1 # Penalty awarded at each step to encourage shorter paths
 EXPLORATION_RATE = 0.2 # Probability of selecting random next-action
 LEARNING_RATE = 0.3 # Rate of updating Q-value
 DISCOUNT = 0.9 # Weight associated with future rewards
-EPSILON = 100000 # Training cycles
+EPOCHS = 100000 # Training cycles
 
 def main():
     # Create field with mines
@@ -35,7 +35,7 @@ def create_Q_table(field, num_actions):
     Q_table = np.zeros([field.length, field.length, num_actions]) # Initialise zeroed Q-table
     states = field.get_states() # Get all possible states
     agent = Agent(field) # Initialise agent
-    for _ in range(EPSILON):
+    for _ in range(EPOCHS):
         state = choice(states) # Randomly select a state
         agent.set_position(state) # Position agent at state
         new_state = (-1, -1) # Initialise with invalid state
