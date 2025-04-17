@@ -14,7 +14,6 @@ LEARNING_RATE = 0.3 # Rate of updating Q-value
 DISCOUNT = 0.9 # Weight associated with future rewards
 EPSILON = 100000 # Training cycles
 
-
 def main():
     # Create field with mines
     field = Field(length=LENGTH, mines=MINES, goal=GOAL)
@@ -32,7 +31,6 @@ def main():
     print("\nPolicy:")
     print(extract_policy(q_table, field))
     
-
 def create_Q_table(field, num_actions):
     Q_table = np.zeros([field.length, field.length, num_actions]) # Initialise zeroed Q-table
     states = field.get_states() # Get all possible states
