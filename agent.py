@@ -17,6 +17,9 @@ class Agent:
     
     # Get next state without moving agent
     def next_state(self, direction):
+        # If terminal state, simply return current position
+        if self.position in self.field.mines or self.position == self.field.goal:
+            return self.position
         x, y = self.position
         return (x + self.delta_x[direction], y + self.delta_y[direction])
 

@@ -2,36 +2,35 @@ import numpy as np
 from field import Field
 from agent import Agent
 from random import choice, choices, randint
-from copy import deepcopy
 
 LENGTH = 10 # Length of board
 MINES = 20 # Number of mines to be randomly planted
 GOAL = (9, 9) # Coordinate of goal state
 REWARD = 10 # Reward for reaching goal state
-PENALTY = -100 # Penalty for encountering mine
+PENALTY = -10 # Penalty for encountering mine
 STEP_PENALTY = -1 # Penalty awarded at each step to encourage shorter paths
 EXPLORATION_RATE = 0.2 # Probability of selecting random next-action
-LEARNING_RATE = 0.2 # Rate of updating Q-value
+LEARNING_RATE = 0.3 # Rate of updating Q-value
 DISCOUNT = 0.9 # Weight associated with future rewards
-EPSILON = 10000000 # Training cycles
+EPSILON = 100000 # Training cycles
 
 
 def main():
     # Create field with mines
-    game = Field(length=LENGTH, mines=MINES, goal=GOAL)
+    field = Field(length=LENGTH, mines=MINES, goal=GOAL)
     # Create agent object
-    agent = Agent(game)
+    agent = Agent(field)
     # Create Utility Table
-    q_table = create_Q_table(game, len(Agent.directions))
+    q_table = create_Q_table(field, len(Agent.directions))
     # Print Actual Minefield
     print("\nHidden Minefield:")
-    print(agent.field)
+    print(field)
     # Print expected utilities
     print("\nExpected Utilities:")
     print(flatten_q_table(q_table))
     # Print policy
     print("\nPolicy:")
-    print(extract_policy(q_table))
+    print(extract_policy(q_table, field))
     
 
 def create_Q_table(field, num_actions):
@@ -58,21 +57,20 @@ def create_Q_table(field, num_actions):
         Q_table[state[0], state[1], action] += LEARNING_RATE * (get_reward(field, new_state) + DISCOUNT * new_q - current_q) # Temporal difference equation
     return Q_table
 
-def extract_policy(Q_table):
+def extract_policy(Q_table, field):
     directions = Agent.directions
-    reference = Field(LENGTH, MINES, GOAL)
     for x in range(np.size(Q_table, 0)):
         for y in range(np.size(Q_table, 1)):
-            if reference.map[x][y] == 0:
-                reference.map[x][y] = directions[int(np.argmax(Q_table[x, y, :]))] # Replace all '0's with reccomended direction based on policy
-    return reference
+            if field.map[x][y] == 0:
+                field.map[x][y] = directions[int(np.argmax(Q_table[x, y, :]))] # Replace all '0's with reccomended direction based on policy
+    return field
 
-def flatten_q_table(util_table):
+def flatten_q_table(Q_table):
     np.set_printoptions(1) # Set np to 1 d.p.
-    expected_utility = np.zeros([np.size(util_table, 0), np.size(util_table, 1)]) # Initialise zeroed 2D array
-    for x in range(np.size(util_table, 0)):
-        for y in range(np.size(util_table, 1)):
-            expected_utility[x][y] = np.max(util_table[x, y, :]) # Store maximimum utility
+    expected_utility = np.zeros([np.size(Q_table, 0), np.size(Q_table, 1)]) # Initialise zeroed 2D array
+    for x in range(np.size(Q_table, 0)):
+        for y in range(np.size(Q_table, 1)):
+            expected_utility[x][y] = np.max(Q_table[x, y, :]) # Store maximimum utility
     return expected_utility
             
 def get_reward(field, coordinate):
