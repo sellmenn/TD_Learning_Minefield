@@ -5,7 +5,7 @@ from random import choice, choices, randint
 
 LENGTH = 10 # Length of board
 MINES = 20 # Number of mines to be randomly planted
-GOAL = (9, 9) # Coordinate of goal state
+GOALS = [(9, 9)] # Coordinate of goal state
 REWARD = 10 # Reward for reaching goal state
 PENALTY = -10 # Penalty for encountering mine
 STEP_PENALTY = -1 # Penalty awarded at each step to encourage shorter paths
@@ -16,9 +16,7 @@ EPOCHS = 100000 # Training cycles
 
 def main():
     # Create field with mines
-    field = Field(length=LENGTH, mines=MINES, goal=GOAL)
-    # Create agent object
-    agent = Agent(field)
+    field = Field(length=LENGTH, mines=MINES, goals=GOALS)
     # Create Utility Table
     q_table = create_Q_table(field, len(Agent.directions))
     # Print Actual Minefield
@@ -74,7 +72,7 @@ def flatten_q_table(Q_table):
 def get_reward(field, coordinate):
     if coordinate in field.mines:
         return PENALTY
-    elif coordinate == GOAL:
+    elif coordinate in GOALS:
         return REWARD
     else:
         return STEP_PENALTY

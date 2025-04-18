@@ -8,7 +8,7 @@ class Agent:
 
     def __init__(self, field = Field()) -> None:
         self.position = (0, 0)
-        self.goal = field.goal
+        self.goals = field.goals
         self.field = field
 
     # Move agent to coordinate
@@ -18,7 +18,7 @@ class Agent:
     # Get next state without moving agent
     def next_state(self, direction):
         # If terminal state, simply return current position
-        if self.position in self.field.mines or self.position == self.field.goal:
+        if self.position in self.field.mines or self.position in self.field.goals:
             return self.position
         x, y = self.position
         return (x + self.delta_x[direction], y + self.delta_y[direction])

@@ -1,10 +1,10 @@
 from random import randint
 
 class Field:
-    def __init__(self, length = 10, mines = 20, goal = (9, 9))-> None:
+    def __init__(self, length = 10, mines = 20, goals = [(9, 9)])-> None:
         self.length = length
         self.num_mines = mines
-        self.goal = goal
+        self.goals = goals
         self.map, self.mines = self.create_field()
         self.states = self.get_states()
 
@@ -15,7 +15,7 @@ class Field:
         length = self.length
         for i in range(length):
             for j in range(length):
-                if (i,j) != self.goal:
+                if (i,j) not in self.goals:
                     field_str += f" {str(field[i][j])} "
                 else:
                     field_str += " G "
@@ -34,7 +34,7 @@ class Field:
         mine_count = 0
         while mine_count < self.num_mines:
             x, y = randint(0, length - 1), randint(0, length - 1)
-            if (x, y) not in mines and (x,y) not in self.goal:
+            if (x, y) not in mines and (x,y) not in self.goals:
                 field[x][y] = "X"
                 mines.append((x, y))
             mine_count += 1
