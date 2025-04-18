@@ -1,12 +1,13 @@
 from random import randint
 
 class Field:
-    def __init__(self, length = 10, mines = 20, goals = [(9, 9)])-> None:
+    def __init__(self, length = 10, mines = 20, goals = [(9, 9)], terminal = [])-> None:
         self.length = length
         self.num_mines = mines
         self.goals = goals
         self.map, self.mines = self.create_field()
         self.states = self.get_states()
+        self.terminal = terminal + self.goals + self.mines
 
     # Return a map of the minefield as a str object
     def __repr__(self):
