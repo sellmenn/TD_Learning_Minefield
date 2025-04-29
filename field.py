@@ -49,3 +49,11 @@ class Field:
                 if (i,j) not in exc:
                     states.append((i,j))
         return states
+    
+    def is_valid_state(self, state):
+        return state in self.states
+    
+    def is_terminal(self, state):
+        if state in self.terminal:
+            return True
+        return False

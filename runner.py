@@ -9,10 +9,10 @@ GOALS = [(9, 9)] # Coordinate of goal state
 REWARD = 10 # Reward for reaching goal state
 PENALTY = -10 # Penalty for encountering mine
 STEP_PENALTY = -1 # Penalty awarded at each step to encourage shorter paths
-EXPLORATION_RATE = 0.2 # Probability of selecting random next-action
-LEARNING_RATE = 0.3 # Rate of updating Q-value
+EXPLORATION_RATE = 0.3 # Probability of selecting random next-action
+LEARNING_RATE = 0.4 # Rate of updating Q-value
 DISCOUNT = 0.9 # Weight associated with future rewards
-EPOCHS = 100000 # Training cycles
+EPOCHS = 10000 # Training cycles
 
 def main():
     # Create field with mines
@@ -35,22 +35,23 @@ def create_Q_table(field, num_actions):
     agent = Agent(field) # Initialise agent
     for _ in range(EPOCHS):
         state = choice(states) # Randomly select a state
-        agent.set_position(state) # Position agent at state
-        new_state = (-1, -1) # Initialise with invalid state
+        agent.set_position(state)
         attempts = 0
-        # Repeat until a valid new state is obtained, or attempt limit is reached
-        while new_state not in field.states and attempts < 10:
+        # Repeat until attempt limit is reached
+        while attempts < LENGTH**2:
+            state = agent.position
+            attempts += 1 
             if choices([True, False], [EXPLORATION_RATE, 1-EXPLORATION_RATE])[0]: # Explore or exploit
-                action = randint(0, len(Agent.directions)-1) # Select random action
+                action = randint(0,len(agent.directions)-1) # Select random action
             else:
                 action = np.argmax(Q_table[state[0], state[1], :]) # Select action with greatest utility
             new_state = agent.next_state(action) # Get the new state associated with performing the action
-            attempts += 1 
-        if attempts > 9: 
-            continue # Skip this iteration if unable to select a legal action
-        new_q = max(Q_table[new_state[0], new_state[1], :]) # Obtain maximum possible utility from new state
-        current_q = Q_table[state[0], state[1], action] 
-        Q_table[state[0], state[1], action] += LEARNING_RATE * (get_reward(field, new_state) + DISCOUNT * new_q - current_q) # Temporal difference equation
+            if new_state not in states:
+                break
+            new_q = max(Q_table[new_state[0], new_state[1], :]) # Obtain maximum possible utility from new state
+            current_q = Q_table[state[0], state[1], action] 
+            Q_table[state[0], state[1], action] += LEARNING_RATE * (get_reward(field, new_state) + DISCOUNT * new_q - current_q) # Temporal difference equation
+            agent.set_position(new_state) # Position agent at state
     return Q_table
 
 def extract_policy(Q_table, field):

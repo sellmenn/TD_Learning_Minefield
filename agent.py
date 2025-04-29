@@ -22,4 +22,10 @@ class Agent:
             return self.position
         x, y = self.position
         return (x + self.delta_x[direction], y + self.delta_y[direction])
+    
+    def is_terminal(self):
+        if self.field.is_terminal(self.position):
+            return True
+        return False
+
 
